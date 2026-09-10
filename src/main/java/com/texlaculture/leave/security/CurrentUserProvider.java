@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-/**
- * Small helper so services can find out "who is calling right now"
- * without repeating SecurityContextHolder lookups everywhere.
- */
+
 @Component
 @RequiredArgsConstructor
 public class CurrentUserProvider {

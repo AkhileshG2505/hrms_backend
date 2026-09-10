@@ -22,8 +22,7 @@ public class LeaveService {
     private final LeaveRequestRepository leaveRequestRepository;
     private final EmployeeRepository employeeRepository;
 
-    // Leave requests in these states "hold" days against the calendar,
-    // so a new request can't overlap with them.
+
     private static final List<LeaveStatus> BLOCKING_STATUSES = List.of(LeaveStatus.PENDING, LeaveStatus.APPROVED);
 
     @Transactional
@@ -38,14 +37,14 @@ public class LeaveService {
         long requestedDays = java.time.temporal.ChronoUnit.DAYS.between(
                 request.getStartDate(), request.getEndDate()) + 1;
 
-        // Rule 1: cannot request more days than remaining balance
+
         if (requestedDays > employee.getRemainingLeaveBalance()) {
             throw new LeaveRuleViolationException(
                     "Requested " + requestedDays + " day(s), but only "
                             + employee.getRemainingLeaveBalance() + " day(s) remain in the leave balance");
         }
 
-        // Rule 2: cannot overlap with an existing pending/approved request
+
         List<LeaveRequest> existing = leaveRequestRepository
                 .findByEmployeeIdAndStatusIn(employeeId, BLOCKING_STATUSES);
 
@@ -94,8 +93,7 @@ public class LeaveService {
         Employee employee = leaveRequest.getEmployee();
         long days = leaveRequest.getNumberOfDays();
 
-        // Re-check balance at approval time too - it may have changed
-        // since the request was submitted (e.g. other leave approved meanwhile).
+
         if (days > employee.getRemainingLeaveBalance()) {
             throw new LeaveRuleViolationException(
                     "Cannot approve: employee only has " + employee.getRemainingLeaveBalance() + " day(s) left");
@@ -121,10 +119,7 @@ public class LeaveService {
         return leaveRequestRepository.save(leaveRequest);
     }
 
-    /**
-     * Ownership check used by the controller: an EMPLOYEE may only act on
-     * their own leave requests / employee record. HR is exempt from this check.
-     */
+
     public void assertOwnership(Long targetEmployeeId, Long callerEmployeeId) {
         if (callerEmployeeId == null || !callerEmployeeId.equals(targetEmployeeId)) {
             throw new AccessDeniedException("You may only access your own leave records");

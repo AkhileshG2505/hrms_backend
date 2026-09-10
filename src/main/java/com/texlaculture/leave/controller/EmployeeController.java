@@ -24,7 +24,7 @@ public class EmployeeController {
     private final LeaveService leaveService;
     private final CurrentUserProvider currentUserProvider;
 
-    // Only HR onboards new employees
+
     @PostMapping
     @PreAuthorize("hasRole('HR')")
     public ResponseEntity<EmployeeResponse> createEmployee(@Valid @RequestBody CreateEmployeeRequest request) {
@@ -32,7 +32,6 @@ public class EmployeeController {
         return ResponseEntity.status(HttpStatus.CREATED).body(EmployeeResponse.from(employee));
     }
 
-    // HR can view anyone; an EMPLOYEE can only view their own record
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeResponse> getEmployee(@PathVariable Long id) {
         AppUser currentUser = currentUserProvider.getCurrentUser();

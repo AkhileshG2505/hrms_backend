@@ -3,11 +3,7 @@ package com.texlaculture.leave.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-/**
- * Login identity, kept separate from Employee on purpose.
- * HR staff don't need an Employee record (no leave balance to track),
- * and this keeps authentication concerns out of the HR/business entities.
- */
+
 @Entity
 @Table(name = "app_users")
 @Getter
@@ -31,8 +27,7 @@ public class AppUser {
     @Column(nullable = false)
     private Role role;
 
-    // Links this login to their Employee record, so an EMPLOYEE user
-    // can only see/apply for their own leave. Null for HR users.
+
     @Column(name = "employee_id")
     private Long employeeId;
 }

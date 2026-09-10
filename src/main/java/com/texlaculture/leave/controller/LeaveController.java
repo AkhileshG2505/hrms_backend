@@ -25,8 +25,7 @@ public class LeaveController {
     private final LeaveService leaveService;
     private final CurrentUserProvider currentUserProvider;
 
-    // An employee applies for their own leave.
-    // employeeId in the path must match the caller's own record unless they're HR.
+
     @PostMapping("/employees/{employeeId}")
     public ResponseEntity<LeaveResponse> applyForLeave(@PathVariable Long employeeId,
                                                          @Valid @RequestBody ApplyLeaveRequest request) {
@@ -39,7 +38,7 @@ public class LeaveController {
         return ResponseEntity.status(HttpStatus.CREATED).body(LeaveResponse.from(leaveRequest));
     }
 
-    // HR sees every leave request; an employee sees only their own.
+
     @GetMapping
     public ResponseEntity<List<LeaveResponse>> getLeaves() {
         AppUser currentUser = currentUserProvider.getCurrentUser();
@@ -65,7 +64,7 @@ public class LeaveController {
         return ResponseEntity.ok(LeaveResponse.from(leaveRequest));
     }
 
-    // Only HR can approve or reject
+
     @PutMapping("/{id}/approve")
     @PreAuthorize("hasRole('HR')")
     public ResponseEntity<LeaveResponse> approveLeave(@PathVariable Long id) {
